@@ -40,7 +40,9 @@ public class AFND{
      */
     private Set<Estado> funcionDelta(final Estado q,final Character c){
         //Falta manejo de excepciones
-        return delta.get(q).getOrDefault(c, new HashSet<Estado>());
+        Set<Estado> res=delta.get(q).getOrDefault(c, new HashSet<Estado>());
+        eClausura(res);
+        return res;
     }
 
     /***
@@ -52,6 +54,7 @@ public class AFND{
         if (cadena.isEmpty()){
             Set<Estado> res=new HashSet<Estado>(1);
             res.add(q);
+            eClausura(res);
             return res;
         }
         else{
@@ -64,6 +67,22 @@ public class AFND{
             }
             return res;
         }
+    }
+
+    /**
+     * Expande un conjunto de acuerdo a su e Clausura
+     * @param estados estados a expandir
+     * @return 
+     */
+    private void eClausura(Set<Estado> estados){
+        boolean changed;
+        do {
+            changed=false;
+            for(Estado e:estados){
+                changed=changed||estados.addAll(delta.get(e).getOrDefault(null, new HashSet<Estado>()));
+            }
+        } while (changed);
+        return;
     }
 
     /***
@@ -101,6 +120,11 @@ public class AFND{
     }
 
     public static void main(final String[] args) {
+        pruebaConE();
+        pruebaSinE();
+    }
+
+    private static void pruebaSinE(){
         System.out.println("Prueba de AFND que determina si una cadena de caracteres un '1' en el penúltimo caracter");
         final Estado q1=new Estado("1");
         final Estado q2=new Estado("2");
@@ -118,7 +142,7 @@ public class AFND{
         delta.put(q2, d2);
         final HashMap<Character,Set<Estado>> d3=new HashMap<Character,Set<Estado>>(2);
         delta.put(q3, d3);
-        final AFND unosImpares=new AFND(delta, q1, finales);
+        final AFND penultimoUno=new AFND(delta, q1, finales);
         final String[] cadenas={
             "011000111001111",
             "01",
@@ -128,7 +152,88 @@ public class AFND{
             "111000011101"
         };
         for (final String c:cadenas){
-            System.out.println(c+" - "+unosImpares.validarEntrada(c));
+            System.out.println(c+" - "+penultimoUno.validarEntrada(c));
         }
     }
+
+    private static void pruebaConE(){
+        System.out.println("Prueba de AFND que determina si una cadena es un número con decimales correcto");
+        final Estado q0=new Estado("0");
+        final Estado q1=new Estado("1");
+        final Estado q2=new Estado("2");
+        final Estado q3=new Estado("3");
+        final Estado q4=new Estado("4");
+        final Estado q5=new Estado("5");
+        final Set<Estado> finales=new HashSet<Estado>();
+        finales.add(q5);
+        final HashMap<Estado,HashMap<Character,Set<Estado>>> delta=new HashMap<Estado,HashMap<Character,Set<Estado>>>(6);
+        HashMap<Character,Set<Estado>> d=new HashMap<Character,Set<Estado>>();
+        d.put(null,new HashSet<Estado>(Arrays.asList(q1)) );
+        d.put('+',new HashSet<Estado>(Arrays.asList(q1)));
+        d.put('-',new HashSet<Estado>(Arrays.asList(q1)));
+        delta.put(q0,d);
+
+        d=new HashMap<Character,Set<Estado>>();
+        d.put('0',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('1',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('2',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('3',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('4',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('5',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('6',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('7',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('8',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('9',new HashSet<Estado>(Arrays.asList(q1,q4)));
+        d.put('.',new HashSet<Estado>(Arrays.asList(q2)));
+        delta.put(q1, d);
+
+        d=new HashMap<Character,Set<Estado>>();
+        d.put('0',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('1',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('2',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('3',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('4',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('5',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('6',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('7',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('8',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('9',new HashSet<Estado>(Arrays.asList(q3)));
+        delta.put(q2, d);
+
+        d=new HashMap<Character,Set<Estado>>();
+        d.put('0',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('1',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('2',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('3',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('4',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('5',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('6',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('7',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('8',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put('9',new HashSet<Estado>(Arrays.asList(q3)));
+        d.put(null,new HashSet<Estado>(Arrays.asList(q5)));
+        delta.put(q3, d);
+
+        d=new HashMap<Character,Set<Estado>>();
+        d.put('.',new HashSet<Estado>(Arrays.asList(q3)));
+        delta.put(q4, d);
+
+        d=new HashMap<Character,Set<Estado>>();
+        delta.put(q5, d);
+
+        final AFND decimales=new AFND(delta, q0, finales);
+        final String[] cadenas={
+            "4.500",
+            "40000.",
+            "+0.5",
+            "-.5",
+            "-.",
+            "000004.5",
+            "-5."
+        };
+        for (final String c:cadenas){
+            System.out.println(c+" - "+decimales.validarEntrada(c));
+        }
+    }
+
 }
