@@ -101,28 +101,31 @@ public class AFND{
     }
 
     public static void main(final String[] args) {
-        System.out.println("Prueba de AFND que determina si una cadena de caracteres tiene una cantidad impar de '1's");
-        final Estado qEven=new Estado("qEven");
-        final Estado qOdd=new Estado("qOdd");
+        System.out.println("Prueba de AFND que determina si una cadena de caracteres un '1' en el penúltimo caracter");
+        final Estado q1=new Estado("1");
+        final Estado q2=new Estado("2");
+        final Estado q3=new Estado("3");
         final Set<Estado> finales=new HashSet<Estado>();
-        finales.add(qOdd);
+        finales.add(q3);
         final HashMap<Estado,HashMap<Character,Set<Estado>>> delta=new HashMap<Estado,HashMap<Character,Set<Estado>>>(2);
-        final HashMap<Character,Set<Estado>> dEven=new HashMap<Character,Set<Estado>>(2);
-        dEven.put('0',new HashSet<Estado>(Arrays.asList(qEven)) );
-        dEven.put('1',new HashSet<Estado>(Arrays.asList(qOdd)));
-        delta.put(qEven,dEven);
-        final HashMap<Character,Set<Estado>> dOdd=new HashMap<Character,Set<Estado>>(2);
-        dOdd.put('0',new HashSet<Estado>(Arrays.asList(qOdd)));
-        dOdd.put('1',new HashSet<Estado>(Arrays.asList(qEven)));
-        delta.put(qOdd, dOdd);
-        final AFND unosImpares=new AFND(delta, qEven, finales);
+        final HashMap<Character,Set<Estado>> d1=new HashMap<Character,Set<Estado>>(2);
+        d1.put('0',new HashSet<Estado>(Arrays.asList(q1)) );
+        d1.put('1',new HashSet<Estado>(Arrays.asList(q1,q2)));
+        delta.put(q1,d1);
+        final HashMap<Character,Set<Estado>> d2=new HashMap<Character,Set<Estado>>(2);
+        d2.put('0',new HashSet<Estado>(Arrays.asList(q3)));
+        d2.put('1',new HashSet<Estado>(Arrays.asList(q3)));
+        delta.put(q2, d2);
+        final HashMap<Character,Set<Estado>> d3=new HashMap<Character,Set<Estado>>(2);
+        delta.put(q3, d3);
+        final AFND unosImpares=new AFND(delta, q1, finales);
         final String[] cadenas={
             "011000111001111",
             "01",
-            "1",
+            "10",
             "11011",
             "11111",
-            "111000011111"
+            "111000011101"
         };
         for (final String c:cadenas){
             System.out.println(c+" - "+unosImpares.validarEntrada(c));
