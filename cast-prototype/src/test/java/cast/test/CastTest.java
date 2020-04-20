@@ -44,62 +44,62 @@ public class CastTest {
 	 */
 	@Test(expected=NotStructCompException.class)
 	public void testEPersonaEmpleado() {
-		Object o=CastHelper.cast(p, EmpleadoAdministrativo.class);
+		CastHelper.cast(p, EmpleadoAdministrativo.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN01() {
-		Object o=CastHelper.cast(d, EmpleadoAdministrativo.class);
+		CastHelper.cast(d, EmpleadoAdministrativo.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN02() {
-		Object o=CastHelper.cast(d, Estudiante.class);
+		CastHelper.cast(d, Estudiante.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN03() {
-		Object o=CastHelper.cast(p, Docente.class);
+		CastHelper.cast(p, Docente.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN04() {
-		Object o=CastHelper.cast(p, EmpleadoAdministrativo.class);
+		CastHelper.cast(p, EmpleadoAdministrativo.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN05() {
-		Object o=CastHelper.cast(p, Empleado.class);
+		CastHelper.cast(p, Empleado.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN06() {
-		Object o=CastHelper.cast(p, Estudiante.class);
+		CastHelper.cast(p, Estudiante.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN07() {
-		Object o=CastHelper.cast(em, Docente.class);
+		CastHelper.cast(em, Docente.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN08() {
-		Object o=CastHelper.cast(em, Estudiante.class);
+		CastHelper.cast(em, Estudiante.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN09() {
-		Object o=CastHelper.cast(es, Empleado.class);
+		CastHelper.cast(es, Empleado.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN10() {
-		Object o=CastHelper.cast(es, EmpleadoAdministrativo.class);
+		CastHelper.cast(es, EmpleadoAdministrativo.class);
 	}
 	
 	@Test(expected=NotStructCompException.class)
 	public void testN11() {
-		Object o=CastHelper.cast(es, Docente.class);
+		CastHelper.cast(es, Docente.class);
 	}
 	
 	@Test
