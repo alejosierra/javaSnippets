@@ -1,3 +1,5 @@
 /target/
 /cast-prototype.iml
 /.idea/
+/.classpath
+/.settings
