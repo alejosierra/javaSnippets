@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 /***
@@ -10,14 +11,15 @@ public class StatsCovid{
     public static void main(String[] args) {
         Scanner sc=new Scanner(System.in);
         int cont=0;
-        int casos[]=new int[10];
-        int recuperados[]=new int[10];
-        int fallecidos[]=new int[10];
-        int casosAcumulados[]=new int[10];
-        int recuperadosAcumulados[]=new int[10];
-        int fallecidosAcumulados[]=new int[10];
-        double promedios3dias[]=new double[100];
-        double promedios7dias[]=new double[100];
+        int tam_inicial=10;
+        int casos[]=new int[tam_inicial];
+        int recuperados[]=new int[tam_inicial];
+        int fallecidos[]=new int[tam_inicial];
+        int casosAcumulados[]=new int[tam_inicial];
+        int recuperadosAcumulados[]=new int[tam_inicial];
+        int fallecidosAcumulados[]=new int[tam_inicial];
+        double promedios3dias[]=new double[tam_inicial];
+        double promedios7dias[]=new double[tam_inicial];
         do{
             System.out.println("Ingrese la contidas de nuevos casos(-1 para salir):");
             int casosDia=sc.nextInt();
@@ -48,6 +50,9 @@ public class StatsCovid{
                 casosAcumulados=casosAcumTemp;
                 recuperadosAcumulados=recuperadosAcumTemp;
                 fallecidosAcumulados=fallecidosAcumTemp;
+                //Clonar utilizando la clase Arrays
+                promedios3dias=Arrays.copyOf(promedios3dias, cont*2);
+                promedios7dias=Arrays.copyOf(promedios7dias, cont*2);
             }
             casos[cont]=casosDia;
             System.out.println("Ingrese la contidas de nuevos recuperados:");
@@ -93,5 +98,6 @@ public class StatsCovid{
                 promedios7dias[i]
             );
         }
+        sc.close();
     }
 }
