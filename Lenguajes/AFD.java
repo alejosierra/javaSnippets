@@ -1,4 +1,6 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Clase que representa la implementación base (incompleta) de un Automata de Estados Finitos Determinista
@@ -11,15 +13,15 @@ public class AFD{
     /**
      * Función de transición.
      */
-    private HashMap<Estado,HashMap<Character,Estado>> delta;
+    private final HashMap<Estado,HashMap<Character,Estado>> delta;
     /**
      * Estado inicial
      */
-    private Estado inicial;
+    private final Estado inicial;
     /**
      * Estados finales
      */
-    private List<Estado> finales;
+    private final Set<Estado> finales;
     //EL alfabeto es el conjunto de Character
 
     /***
@@ -28,7 +30,7 @@ public class AFD{
      * El estado inicial
      * Una lista con los estados finales
      */
-    public AFD(HashMap<Estado,HashMap<Character,Estado>> delta,Estado inicial,List<Estado> finales){
+    public AFD(final HashMap<Estado,HashMap<Character,Estado>> delta,final Estado inicial,final Set<Estado> finales){
         this.delta=delta;
         this.inicial=inicial;
         this.finales=finales;
@@ -38,23 +40,27 @@ public class AFD{
      * Función de transición básica, dado un estado y un caracter retorna el nuevo estado
      * -No hay manejo de transiciones que no están explícitas en la función de transición
      */
-    private Estado funcionDelta(Estado q,Character c){
-        //Falta manejo de excepciones
-        return delta.get(q).get(c);
+    private Estado funcionDelta(final Estado q,final Character c) throws InvalidStateException{
+        try{
+            return delta.get(q).get(c);
+        }catch(NullPointerException npe){
+            throw new InvalidStateException();
+        }
+        
     }
 
     /***
      * Función de transición extendida. Dado un estado (q) y una cadena de caracteres (cadena), retorna
      * el estado final.
      */
-    private Estado funcionDeltaExtendida(Estado q,String cadena){
+    private Estado funcionDeltaExtendida(final Estado q,final String cadena) throws InvalidStateException{
         // falta manejo de excepciones
         if (cadena.isEmpty())
             return q;
         else{
             //TODO Se puede optimizar el particionamiento de la cadena
-            String x=cadena.substring(0, cadena.length() - 1);
-            Character a=cadena.charAt(cadena.length() - 1);
+            final String x=cadena.substring(0, cadena.length() - 1);
+            final Character a=cadena.charAt(cadena.length() - 1);
             return funcionDelta(funcionDeltaExtendida(q,x), a);
         }
     }
@@ -64,19 +70,24 @@ public class AFD{
      * iniciando el el estado inicial.
      */
     public Boolean validarEntrada(String w){
-        return finales.contains(funcionDeltaExtendida(inicial,w));
+        try{
+            return finales.contains(funcionDeltaExtendida(inicial,w));
+        }catch(InvalidStateException ise){
+            return false;
+        }
+        
     }
 
     /***
      * Clase que representa un estado genérico de un autómata. Los estado se identifican por un nombre.
      */
     public static class Estado{
-        private String nombre;
+        private final String nombre;
 
         /***
          * Construye un estado a partir del nombre
          */
-        public Estado(String nombre){
+        public Estado(final String nombre){
             this.nombre=nombre;
         }
 
@@ -96,30 +107,32 @@ public class AFD{
      * @param destino estado destino
      * @param transiciones mapa de transiciones. EN este mapa quedar{an las nuevas transiciones
      */
-    private static void agregarRango(Character ini,Character fin, Estado destino, HashMap<Character,Estado> transiciones){
+    private static void agregarRango(final Character ini,final Character fin, final Estado destino, final HashMap<Character,Estado> transiciones){
         for (Character c=ini;c<=fin;c++){
-            System.out.println(c);
             transiciones.put(c, destino);
         }
     }
 
+    /***
+     * Prueba de AFD con autómata que valida cadenas de 1s y 0s con una cantidad impar de 1s
+     */
     private static void pruebaUnosImpares(){
         System.out.println("Prueba de AFD que determina si una cadena de caracteres tiene una cantidad impar de '1's");
-        Estado qEven=new Estado("qEven");
-        Estado qOdd=new Estado("qOdd");
-        List<Estado> finales=new LinkedList<Estado>();
+        final Estado qEven=new Estado("qEven");
+        final Estado qOdd=new Estado("qOdd");
+        final Set<Estado> finales=new HashSet<Estado>(2);
         finales.add(qOdd);
-        HashMap<Estado,HashMap<Character,Estado>> delta=new HashMap<Estado,HashMap<Character,Estado>>(2);
-        HashMap<Character,Estado> dEven=new HashMap<Character,Estado>(2);
+        final HashMap<Estado,HashMap<Character,Estado>> delta=new HashMap<Estado,HashMap<Character,Estado>>(2);
+        final HashMap<Character,Estado> dEven=new HashMap<Character,Estado>(2);
         dEven.put('0',qEven);
         dEven.put('1',qOdd);
         delta.put(qEven,dEven);
-        HashMap<Character,Estado> dOdd=new HashMap<Character,Estado>(2);
+        final HashMap<Character,Estado> dOdd=new HashMap<Character,Estado>(2);
         dOdd.put('0',qOdd);
         dOdd.put('1',qEven);
         delta.put(qOdd, dOdd);
-        AFD unosImpares=new AFD(delta, qEven, finales);
-        String[] cadenas={
+        final AFD unosImpares=new AFD(delta, qEven, finales);
+        final String[] cadenas={
             "011000111001111",
             "01",
             "1",
@@ -127,7 +140,7 @@ public class AFD{
             "11111",
             "111000011111"
         };
-        for (String c:cadenas){
+        for (final String c:cadenas){
             System.out.println(c+" - "+unosImpares.validarEntrada(c));
         }
     }
@@ -138,37 +151,54 @@ public class AFD{
      */
     private static void pruebaVariables(){
         System.out.println("Prueba de AFD que determina si una cadena de caracteres puede ser el nombre de una variable");
-        Estado q0=new Estado("q0");
-        Estado q1=new Estado("q1");
-        List<Estado> finales=new LinkedList<Estado>();
+        final Estado q0=new Estado("q0");
+        final Estado q1=new Estado("q1");
+        final Set<Estado> finales=new HashSet<Estado>(2);
         finales.add(q1);
-        HashMap<Estado,HashMap<Character,Estado>> delta=new HashMap<Estado,HashMap<Character,Estado>>(2);
-        HashMap<Character,Estado> d0=new HashMap<Character,Estado>(60);
+        final HashMap<Estado,HashMap<Character,Estado>> delta=new HashMap<Estado,HashMap<Character,Estado>>(2);
+        final HashMap<Character,Estado> d0=new HashMap<Character,Estado>(60);
         d0.put('_',q1);
         agregarRango('a', 'z', q1, d0);
         agregarRango('A', 'Z', q1, d0);
         delta.put(q0,d0);
-        HashMap<Character,Estado> d1=new HashMap<Character,Estado>(60);
+        final HashMap<Character,Estado> d1=new HashMap<Character,Estado>(60);
         d1.put('_',q1);
         agregarRango('a', 'z', q1, d1);
         agregarRango('A', 'Z', q1, d1);
         agregarRango('0', '9', q1, d1);
         delta.put(q1, d1);
-        AFD unosImpares=new AFD(delta, q0, finales);
-        String[] cadenas={
+        final AFD variables=new AFD(delta, q0, finales);
+        final String[] cadenas={
             "myVar",
             "_",
             "a",
             "8",
             "var9",
-            "_myvar8"
+            "_myvar8",
+            "",
+            "myVar?",
+            " ",
+            "!",
+            "\"\""
         };
-        for (String c:cadenas){
-            System.out.println(c+" - "+unosImpares.validarEntrada(c));
+        for (final String c:cadenas){
+            System.out.println(c+" - "+variables.validarEntrada(c));
         }
     }
 
-    public static void main(String[] args) {
+    /***
+     * Excepción para representar saltos rechazados por la función de transción
+     */
+    class InvalidStateException extends Exception{
+
+        /**
+         * Por defecto
+         */
+        private static final long serialVersionUID = 1L;
+        
+    }
+
+    public static void main(final String[] args) {
         pruebaVariables();
     }
 }
