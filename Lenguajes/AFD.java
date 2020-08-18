@@ -89,7 +89,21 @@ public class AFD{
         }
     }
 
-    public static void main(String[] args) {
+    /***
+     * Agrega un rango de caracteres a un hashmap
+     * @param ini caracter inicial (incluido)
+     * @param fin caracter final (includio)
+     * @param destino estado destino
+     * @param transiciones mapa de transiciones. EN este mapa quedar{an las nuevas transiciones
+     */
+    private static void agregarRango(Character ini,Character fin, Estado destino, HashMap<Character,Estado> transiciones){
+        for (Character c=ini;c<=fin;c++){
+            System.out.println(c);
+            transiciones.put(c, destino);
+        }
+    }
+
+    private static void pruebaUnosImpares(){
         System.out.println("Prueba de AFD que determina si una cadena de caracteres tiene una cantidad impar de '1's");
         Estado qEven=new Estado("qEven");
         Estado qOdd=new Estado("qOdd");
@@ -116,5 +130,45 @@ public class AFD{
         for (String c:cadenas){
             System.out.println(c+" - "+unosImpares.validarEntrada(c));
         }
+    }
+
+    /***
+     * Prueba de AFD par avariables que inicial con letra o guión bajo y 
+     * continuan con letra gión bajo o número
+     */
+    private static void pruebaVariables(){
+        System.out.println("Prueba de AFD que determina si una cadena de caracteres puede ser el nombre de una variable");
+        Estado q0=new Estado("q0");
+        Estado q1=new Estado("q1");
+        List<Estado> finales=new LinkedList<Estado>();
+        finales.add(q1);
+        HashMap<Estado,HashMap<Character,Estado>> delta=new HashMap<Estado,HashMap<Character,Estado>>(2);
+        HashMap<Character,Estado> d0=new HashMap<Character,Estado>(60);
+        d0.put('_',q1);
+        agregarRango('a', 'z', q1, d0);
+        agregarRango('A', 'Z', q1, d0);
+        delta.put(q0,d0);
+        HashMap<Character,Estado> d1=new HashMap<Character,Estado>(60);
+        d1.put('_',q1);
+        agregarRango('a', 'z', q1, d1);
+        agregarRango('A', 'Z', q1, d1);
+        agregarRango('0', '9', q1, d1);
+        delta.put(q1, d1);
+        AFD unosImpares=new AFD(delta, q0, finales);
+        String[] cadenas={
+            "myVar",
+            "_",
+            "a",
+            "8",
+            "var9",
+            "_myvar8"
+        };
+        for (String c:cadenas){
+            System.out.println(c+" - "+unosImpares.validarEntrada(c));
+        }
+    }
+
+    public static void main(String[] args) {
+        pruebaVariables();
     }
 }
